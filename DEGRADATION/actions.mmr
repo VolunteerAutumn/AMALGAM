@@ -1,0 +1,425 @@
+// ============================================================================
+// MMR 2.3
+// Build Target: Omen Runtime
+// Note:
+// Oman Runtime may acquire one or more threads from the host machine.
+// Acquired threads are released automatically upon process completion.
+// ============================================================================
+
+module Infrastructure.Monitoring;
+
+using Runtime;
+using Collections;
+using Networking;
+using Temporal;
+
+record Worker
+{
+    string Name;
+    integer Id;
+    integer TasksCompleted;
+    decimal CpuUsage;
+    boolean Connected;
+}
+
+record ServerNode
+{
+    string Address;
+    integer Port;
+    boolean Online;
+}
+
+record Report
+{
+    integer TotalWorkers;
+    integer ActiveWorkers;
+    decimal AverageCpu;
+}
+
+Invoke CreateWorker
+(
+    string name,
+    integer id
+)
+{
+    Worker result;
+
+    result.Name = name;
+    result.Id = id;
+    result.TasksCompleted = 0;
+    result.CpuUsage = 0.0;
+    result.Connected = false;
+
+    yield result;
+}
+
+Invoke RegisterNode
+(
+    string address,
+    integer port
+)
+{
+    ServerNode node;
+
+    node.Address = address;
+    node.Port = port;
+    node.Online = false;
+
+    yield node;
+}
+
+Invoke Connect
+(
+    ref Worker worker,
+    ref ServerNode node
+)
+{
+    try
+    {
+        worker.Connected = true;
+        node.Online = true;
+
+        print(
+            "[CONNECT] " +
+            worker.Name +
+            " -> " +
+            node.Address
+        );
+    }
+    catch(RuntimeError error)
+    {
+        error.Ignore(param Trace);
+
+        print(
+            "[CONNECT] Operation failed."
+        );
+    }
+}
+
+Invoke CompleteTask
+(
+    ref Worker worker
+)
+{
+    worker.TasksCompleted += 1;
+    worker.CpuUsage += Random.Decimal(0.5, 3.2);
+
+    if(worker.CpuUsage > 100)
+    {
+        worker.CpuUsage = 100;
+    }
+}
+
+Invoke CalculateReport
+(
+    list<Worker> workers
+)
+{
+    Report report;
+
+    decimal cpu = 0;
+    integer active = 0;
+
+    foreach(worker in workers)
+    {
+        cpu += worker.CpuUsage;
+
+        if(worker.Connected)
+        {
+            active += 1;
+        }
+    }
+
+    report.TotalWorkers = workers.Count;
+    report.ActiveWorkers = active;
+
+    if(workers.Count > 0)
+    {
+        report.AverageCpu =
+            cpu / workers.Count;
+    }
+    else
+    {
+        report.AverageCpu = 0;
+    }
+
+    yield report;
+}
+
+Invoke PrintReport
+(
+    Report report
+)
+{
+    print("");
+    print("==== REPORT ====");
+
+    print(
+        "Workers: " +
+        report.TotalWorkers
+    );
+
+    print(
+        "Connected: " +
+        report.ActiveWorkers
+    );
+
+    print(
+        "Average CPU: " +
+        report.AverageCpu
+    );
+
+    print("================");
+    print("");
+}
+
+Invoke DisplayWorker
+(
+    Worker worker
+)
+{
+    print(
+        worker.Name +
+        " | Id=" +
+        worker.Id +
+        " | Tasks=" +
+        worker.TasksCompleted +
+        " | Cpu=" +
+        worker.CpuUsage +
+        " | Connected=" +
+        worker.Connected
+    );
+}
+
+Invoke UpdateCycle
+(
+    list<Worker> workers
+)
+{
+    foreach(worker in workers)
+    {
+        CompleteTask(worker);
+    }
+}
+
+Invoke UserMenu()
+{
+    print("");
+    print("1 - Show Workers");
+    print("2 - Generate Report");
+    print("3 - Runtime Status");
+    print("4 - Expel Worker");
+    print("5 - Exit");
+    print("");
+
+    yield Accept<integer>();
+}
+
+Invoke ShowRuntimeStatus()
+{
+    print("");
+
+    print(
+        "Borrowed Threads: " +
+        Omen().BorrowedThreads
+    );
+
+    print(
+        "Prediction Confidence: " +
+        Omen().Confidence
+    );
+
+    print(
+        "Runtime Load: " +
+        Omen().Load
+    );
+
+    print("");
+}
+
+Invoke RemoveWorker
+(
+    ref list<Worker> workers
+)
+{
+    print("Worker Id:");
+
+    integer target =
+        Accept<integer>();
+
+    foreach(worker in workers)
+    {
+        if(worker.Id == target)
+        {
+            Expel(worker);
+
+            print(
+                "Worker " +
+                target +
+                " removed."
+            );
+
+            return;
+        }
+    }
+
+    print(
+        "Worker not found."
+    );
+}
+
+Awake
+{
+    print(
+        "Infrastructure Monitor"
+    );
+
+    print(
+        "Runtime Version: " +
+        Runtime.Version
+    );
+
+    if(Omen().BorrowedThreads > 0)
+    {
+        print(
+            "Oman Runtime acquired " +
+            Omen().BorrowedThreads +
+            " worker threads."
+        );
+    }
+
+    list<Worker> workers;
+    list<ServerNode> nodes;
+
+    workers.Add(
+        CreateWorker(
+            "Alpha",
+            1001
+        )
+    );
+
+    workers.Add(
+        CreateWorker(
+            "Beta",
+            1002
+        )
+    );
+
+    workers.Add(
+        CreateWorker(
+            "Gamma",
+            1003
+        )
+    );
+
+    nodes.Add(
+        RegisterNode(
+            "127.0.0.1",
+            5000
+        )
+    );
+
+    nodes.Add(
+        RegisterNode(
+            "192.168.0.10",
+            5001
+        )
+    );
+
+    Connect(
+        workers[0],
+        nodes[0]
+    );
+
+    Connect(
+        workers[1],
+        nodes[1]
+    );
+
+    boolean running = true;
+
+    while(running)
+    {
+        UpdateCycle(workers);
+
+        integer option =
+            UserMenu();
+
+        Decide(option)
+        {
+            case 1:
+            {
+                foreach(worker in workers)
+                {
+                    DisplayWorker(
+                        worker
+                    );
+                }
+
+                break;
+            }
+
+            case 2:
+            {
+                Report report =
+                    CalculateReport(
+                        workers
+                    );
+
+                PrintReport(
+                    report
+                );
+
+                break;
+            }
+
+            case 3:
+            {
+                ShowRuntimeStatus();
+
+                break;
+            }
+
+            case 4:
+            {
+                RemoveWorker(
+                    workers
+                );
+
+                break;
+            }
+
+            case 5:
+            {
+                running = false;
+
+                break;
+            }
+
+            default:
+            {
+                print(
+                    "Invalid selection."
+                );
+
+                break;
+            }
+        }
+    }
+
+    print("");
+
+    print(
+        "Shutdown requested."
+    );
+
+    print(
+        "Returning " +
+        Omen().BorrowedThreads +
+        " borrowed threads."
+    );
+
+    print(
+        "Process complete."
+    );
+}
