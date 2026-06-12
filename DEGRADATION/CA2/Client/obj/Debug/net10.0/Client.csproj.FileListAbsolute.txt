@@ -12,3 +12,17 @@ C:\Users\gurua\source\repos\CA2\Client\obj\Debug\net10.0\refint\Client.dll
 C:\Users\gurua\source\repos\CA2\Client\obj\Debug\net10.0\Client.pdb
 C:\Users\gurua\source\repos\CA2\Client\obj\Debug\net10.0\Client.genruntimeconfig.cache
 C:\Users\gurua\source\repos\CA2\Client\obj\Debug\net10.0\ref\Client.dll
+C:\Users\gurua\source\repos\CAX(timedate)\Client\bin\Debug\net10.0\Client.exe
+C:\Users\gurua\source\repos\CAX(timedate)\Client\bin\Debug\net10.0\Client.deps.json
+C:\Users\gurua\source\repos\CAX(timedate)\Client\bin\Debug\net10.0\Client.runtimeconfig.json
+C:\Users\gurua\source\repos\CAX(timedate)\Client\bin\Debug\net10.0\Client.dll
+C:\Users\gurua\source\repos\CAX(timedate)\Client\bin\Debug\net10.0\Client.pdb
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\Client.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\Client.AssemblyInfoInputs.cache
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\Client.AssemblyInfo.cs
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\Client.csproj.CoreCompileInputs.cache
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\Client.dll
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\refint\Client.dll
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\Client.pdb
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\Client.genruntimeconfig.cache
+C:\Users\gurua\source\repos\CAX(timedate)\Client\obj\Debug\net10.0\ref\Client.dll

@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 
-namespace TimeClient
+namespace Client
 {
     internal class Program
     {
@@ -20,14 +20,9 @@ namespace TimeClient
             {
                 client.Connect(new IPEndPoint(ip, port));
 
-                Console.WriteLine("1 - Дата");
-                Console.WriteLine("2 - Час");
+                string greeting = "Привіт, сервер!";
 
-                string request = Console.ReadLine() == "1"
-                    ? "date"
-                    : "time";
-
-                client.Send(Encoding.UTF8.GetBytes(request));
+                client.Send(Encoding.UTF8.GetBytes(greeting));
 
                 byte[] buffer = new byte[1024];
 
@@ -36,8 +31,8 @@ namespace TimeClient
                 string response =
                     Encoding.UTF8.GetString(buffer, 0, bytesReceived);
 
-                Console.WriteLine("Відповідь сервера:");
-                Console.WriteLine(response);
+                Console.WriteLine(
+                    $"О {DateTime.Now:HH:mm} від {ip} отримано рядок: {response}");
             }
             catch (Exception ex)
             {

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gurua\\source\\repos\\CA2\\Client\\Client.csproj": {}
+    "C:\\Users\\gurua\\source\\repos\\CAX(timedate)\\Client\\Client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gurua\\source\\repos\\CA2\\Client\\Client.csproj": {
+    "C:\\Users\\gurua\\source\\repos\\CAX(timedate)\\Client\\Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gurua\\source\\repos\\CA2\\Client\\Client.csproj",
+        "projectUniqueName": "C:\\Users\\gurua\\source\\repos\\CAX(timedate)\\Client\\Client.csproj",
         "projectName": "Client",
-        "projectPath": "C:\\Users\\gurua\\source\\repos\\CA2\\Client\\Client.csproj",
+        "projectPath": "C:\\Users\\gurua\\source\\repos\\CAX(timedate)\\Client\\Client.csproj",
         "packagesPath": "C:\\Users\\gurua\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gurua\\source\\repos\\CA2\\Client\\obj\\",
+        "outputPath": "C:\\Users\\gurua\\source\\repos\\CAX(timedate)\\Client\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\gurua\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 
-namespace TimeServer
+namespace Server
 {
     internal class Program
     {
@@ -11,45 +11,45 @@ namespace TimeServer
             IPAddress ip = IPAddress.Parse("127.0.0.1");
             int port = 1010;
 
+            IPEndPoint endPoint = new IPEndPoint(ip, port);
+
             Socket server = new Socket(
                 AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp);
 
-            server.Bind(new IPEndPoint(ip, port));
-            server.Listen(10);
-
-            Console.WriteLine("Server running...");
-
-            while (true)
+            try
             {
+                server.Bind(endPoint);
+                server.Listen(10);
+
+                Console.WriteLine("Server running...");
+
                 Socket client = server.Accept();
 
                 byte[] buffer = new byte[1024];
 
                 int bytesReceived = client.Receive(buffer);
 
-                string request =
+                string message =
                     Encoding.UTF8.GetString(buffer, 0, bytesReceived);
 
-                string response;
+                Console.WriteLine(
+                    $"О {DateTime.Now:HH:mm} від {client.RemoteEndPoint} отримано рядок: {message}");
 
-                if (request.ToLower() == "time")
-                {
-                    response = DateTime.Now.ToLongTimeString();
-                }
-                else if (request.ToLower() == "date")
-                {
-                    response = DateTime.Now.ToShortDateString();
-                }
-                else
-                {
-                    response = "Невідома команда";
-                }
+                string response = "Привіт, клієнт!";
 
                 client.Send(Encoding.UTF8.GetBytes(response));
 
                 client.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                server.Close();
             }
         }
     }
